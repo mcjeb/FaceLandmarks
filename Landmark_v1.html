@@ -1,0 +1,77 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Opencv JS</title>
+    <script async src="js/opencv_4_8_0.js" onload="openCvReady();"></script>
+    <script src="js/utils.js"></script>
+</head>
+<body>
+    <video id="cam_input" height="480" width="640"></video>
+    <canvas id="canvas_output"></canvas>
+</body>
+<script type="text/JavaScript">
+function openCvReady() {
+  cv['onRuntimeInitialized']=()=>{
+    let video = document.getElementById("cam_input"); // video is the id of video tag
+    navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+    .then(function(stream) {
+        video.srcObject = stream;
+        video.play();
+    })
+    .catch(function(err) {
+        console.log("An error occurred! " + err);
+    });
+    let src = new cv.Mat(video.height, video.width, cv.CV_8UC4);
+    let dst = new cv.Mat(video.height, video.width, cv.CV_8UC1);
+    let gray = new cv.Mat();
+    let cap = new cv.VideoCapture(cam_input);
+    let faces = new cv.RectVector();
+    let classifier = new cv.CascadeClassifier();
+    let utils = new Utils('errorMessage');
+    const faceCascadeFile = 'haarcascade_frontalface_default.xml'; // path to xml
+    utils.createFileFromUrl(faceCascadeFile, faceCascadeFile, () => {
+    classifier.load(faceCascadeFile); // in the callback, load the cascade from file 
+});
+    // Load the face landmark detector model
+    const landmarkDetector = new cv.FacemarkLBF();
+    landmarkDetector.loadModel("lbfmodel.yaml");
+
+    // Detect facial landmarks in an image
+    function detectLandmarks(image, landmarks) {
+    landmarkDetector.fit(image, landmarks);
+    }
+    const FPS = 30;
+    function processVideo() {
+        let begin = Date.now();
+        cap.read(src);
+        src.copyTo(dst);
+        cv.cvtColor(dst, gray, cv.COLOR_RGBA2GRAY, 0);
+
+        // Detect facial landmarks
+        let landmarks = new cv.MatVector();
+        landmark_detector.detectLandmarks(gray, landmarks);
+
+        // Draw facial landmarks on the image
+        for (let i = 0; i < landmarks.size(); ++i) {
+            let landmark = landmarks.get(i);
+            for (let j = 0; j < landmark.rows; ++j) {
+            let x = landmark.at(j, 0);
+            let y = landmark.at(j, 1);
+            cv.circle(dst, new cv.Point(x, y), 2, [255, 0, 0, 255]);
+            }
+        }
+
+        // Display the image
+        cv.imshow("canvas_output", dst);
+
+        // Schedule next one.
+        let delay = 1000/FPS - (Date.now() - begin);
+        setTimeout(processVideo, delay);
+}
+// schedule first one.
+setTimeout(processVideo, 0);
+  };
+}
+</script>
+</html>
