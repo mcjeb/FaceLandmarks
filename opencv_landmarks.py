@@ -7,10 +7,10 @@ conf_lvl = .55
 print("[INFO] loading facial landmark predictor...")
 detector = cv2.CascadeClassifier('haarcascades/haarcascade_frontalface_default.xml')
 
-dnn_path = 'face_recognition/dnn/'
+dnn_path = 'models/'
 dnn_detector = cv2.dnn.readNetFromCaffe(dnn_path + 'deploy.prototxt', dnn_path + 'res10_300x300_ssd_iter_140000.caffemodel')
 
-LBFmodel = "landmarks/lbfmodel.yaml"
+LBFmodel = "models/lbfmodel.yaml"
 
 landmark_detector = cv2.face.createFacemarkLBF()
 landmark_detector.loadModel(LBFmodel)
