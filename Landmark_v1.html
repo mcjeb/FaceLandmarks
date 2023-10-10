@@ -35,7 +35,7 @@ function openCvReady() {
 });
     // Load the face landmark detector model
     const landmarkDetector = new cv.FacemarkLBF();
-    landmarkDetector.loadModel("lbfmodel.yaml");
+    landmarkDetector.loadModel("models/lbfmodel.yaml");
 
     // Detect facial landmarks in an image
     function detectLandmarks(image, landmarks) {
