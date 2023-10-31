@@ -7,3 +7,5 @@ testCV is a face recognizing test with openCV.js
 openCV.js source: https://docs.opencv.org/4.8.0/opencv.js
 
 opencv_js.js is a build version following these steps: https://forum.opencv.org/t/opencv-js-build-tracking-module-in-opencv-contrib-but-encounter-generate-error/608 but does not seem to work at all for me.
+
+Made it work without OpenCV.js with face-api.js. So this repo is deprecated.
